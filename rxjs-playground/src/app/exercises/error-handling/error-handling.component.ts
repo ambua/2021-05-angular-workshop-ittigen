@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ReplaySubject, throwError, of } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { ReplaySubject, throwError, of, timer } from 'rxjs';
+import { retry, catchError, delayWhen, retryWhen, tap } from 'rxjs/operators';
 
 import { ExerciseService } from '../exercise.service';
 
@@ -28,7 +28,16 @@ export class ErrorHandlingComponent {
 
       /******************************/
 
-      
+      //retry(3)
+
+      retryWhen(errors =>
+        errors.pipe(
+          //log error message
+          tap(val => console.log(`Error: ${val} `)),
+          //restart in x seconds
+          delayWhen(val => timer(1000))
+        )
+      )
       /******************************/
 
     ).subscribe({
