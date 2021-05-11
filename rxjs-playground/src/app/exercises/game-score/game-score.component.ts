@@ -6,38 +6,19 @@ import { scan, reduce } from 'rxjs/operators';
   selector: 'rxw-game-score',
   templateUrl: './game-score.component.html',
 })
-export class GameScoreComponent implements OnInit {
+export class GameScoreComponent {
 
   logStream$ = new ReplaySubject<string | number>();
+  
   score$ = new Subject<number>();
 
-  currentScore = 0;
-  finalScore: number;
+  currentScore$  = this.score$.pipe(
+    scan((acc, item) => acc + item, 0)
+  );
+  finalScore$ = this.score$.pipe(
+    reduce((acc, item) => acc + item, 0)
+  );
 
-  ngOnInit() {
-
-    /**
-     * Wir entwickeln ein spannendes Browser-Spiel!
-     * Jetzt fehlt nur noch der Code, um den aktuellen und den finalen Punktestand zu ermitteln...
-     */
-
-    /******************************/
-
-    this.score$.pipe(
-      scan((acc, item) => acc + item, 0)
-    ).subscribe(score => this.currentScore = score);
-
-    this.score$.pipe(
-      reduce((acc, item) => acc + item, 0)
-    ).subscribe(score => this.finalScore = score);
-
-    /******************************/
-
-    this.score$.subscribe({
-      next: e => this.logStream$.next(e),
-      complete: () => this.logStream$.next('✅ COMPLETE')
-    });
-  }
 
   finishGame() {
     this.score$.complete();
