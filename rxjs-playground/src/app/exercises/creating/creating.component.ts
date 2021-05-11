@@ -23,7 +23,15 @@ export class CreatingComponent implements OnInit {
 
     /******************************/
 
-    
+
+    // observable
+    of('miau').subscribe(
+      e => this.log(e),
+      err => this.log('ERROR' + err),
+      ()=>this.log('Complete')
+      )
+    this.log(':-)')
+
     /******************************/
   }
 
