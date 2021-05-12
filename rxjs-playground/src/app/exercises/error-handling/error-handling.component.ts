@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ReplaySubject, throwError, of, timer } from 'rxjs';
+import { ReplaySubject, throwError, of, timer, EMPTY } from 'rxjs';
 import { retry, catchError, delayWhen, retryWhen, tap } from 'rxjs/operators';
 
 import { ExerciseService } from '../exercise.service';
@@ -30,14 +30,22 @@ export class ErrorHandlingComponent {
 
       //retry(3)
 
-      retryWhen(errors =>
-        errors.pipe(
-          //log error message
-          tap(val => console.log(`Error: ${val} `)),
-          //restart in x seconds
-          delayWhen(val => timer(1000))
-        )
-      )
+      // retryWhen(errors =>
+      //   errors.pipe(
+      //     //log error message
+      //     tap(val => console.log(`Error: ${val} `)),
+      //     //restart in x seconds
+      //     delayWhen(val => timer(1000))
+      //   )
+      // )
+
+
+      catchError((error) => {
+        console.error('error loading: ', error);
+        // return of('I failed miserably');
+        // return throwError(error);
+        return EMPTY;
+      }),
       /******************************/
 
     ).subscribe({
